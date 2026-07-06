@@ -1,0 +1,32 @@
+# Python Caches
+__pycache__/
+*.pyc
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# Large Data Files
+*.geojson
+*.parquet
+saliency/sampled_train_graphs.pkl
+
+# Model Files & Metrics (track .pt via Git LFS — see .gitattributes)
+# spatial_semantic_gnn.pt is the old V1 model and can be deleted
+*_log.json
+_old/
+validation_results/
+
+# Dev artefacts
+scratch/
+paper_figures/
+README_FINAL.md
+clf_train_log.txt
+trial_latex.tex
+
+# Runtime Caches
+_poi_cache/
+memory/
+
+baseline_comparison/tile_cache/
