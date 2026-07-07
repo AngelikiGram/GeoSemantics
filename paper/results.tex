@@ -1,61 +1,98 @@
-\documentclass[12pt]{gsis}
-\usepackage[misc]{ifsym}
-\usepackage{graphicx,subfigure}
-\usepackage{hyperref,caption}
-\usepackage[para,online,flushleft]{threeparttable}
-\usepackage{multirow,booktabs}
-\usepackage{geometry}
+% interactapasample.tex
+% v1.05 - August 2017
+% CaGIS version v1.05.3 - May 2025
+% - altered to label figure parts as a) correctly
+% - use \vspace{1\baselineskip} to add space before --- Figure 1 about here ---
+
+\documentclass[]{interact}
+
+%\usepackage{environ}  %- use to remove figs from rendering
+%\RenewEnviron{figure}{}% Gobble figure environment  - use to remove figs from rendering
+%\RenewEnviron{table}{}% Gobble table environment - use to remove figs from rendering
+
+\usepackage{epstopdf}% To incorporate .eps illustrations using PDFLaTeX, etc.
+\usepackage[caption=false]{subfig}% Support for small, `sub' figures and tables
+\usepackage{subcaption}
+\captionsetup[subfigure]{labelformat=simple}
+\renewcommand\thesubfigure{\alph{subfigure})}
+%\usepackage[nolists,tablesfirst]{endfloat}% To `separate' figures and tables from text if required
+
+%\usepackage[doublespacing]{setspace}% To produce a `double spaced' document if required
+%\setlength\parindent{24pt}% To increase paragraph indentation when line spacing is doubled
+
+\usepackage[longnamesfirst,sort]{natbib}% Citation support using natbib.sty
+\bibpunct[, ]{(}{)}{;}{a}{,}{,}% Citation support using natbib.sty
+\renewcommand\bibfont{\fontsize{10}{12}\selectfont}% To set the list of references in 10 point font using natbib.sty
+
+%\usepackage[natbibapa,nodoi]{apacite}% Citation support using apacite.sty. Commands using natbib.sty MUST be deactivated first!
+%\setlength\bibhang{12pt}% To set the indentation in the list of references using apacite.sty. Commands using natbib.sty MUST be deactivated first!
+%\renewcommand\bibliographytypesize{\fontsize{10}{12}\selectfont}% To set the list of references in 10 point font using apacite.sty. Commands using natbib.sty MUST be deactivated first!
+
+\theoremstyle{plain}% Theorem-like structures provided by amsthm.sty
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\newtheorem{notation}{Notation}
+
+% MINE
+\usepackage{url}
 \usepackage{tabularx}
 \usepackage{tikz}
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.17}
-\usetikzlibrary{positioning, arrows.meta}
-\usepackage{pifont}
-\newcommand{\cmark}{\ding{51}}
-\newcommand{\xmark}{\ding{55}}
-\usepackage{natbib}% Citation support using natbib.sty
-\bibpunct[, ]{(}{)}{;}{a}{}{,}% Citation support using natbib.sty
-
-%%% Project macros
-\newcommand{\sys}{GeoSemantics}
-\newcommand{\patat}[1]{P@#1}
-
-\graphicspath{{figs/}{paper_figures/}{validation_results/}{baseline_comparison/}}
+\usetikzlibrary{positioning,arrows.meta}
 
 \begin{document}
 
-\copyrightyear{2026}
-\datereceived{ xx xx 2026}
-\dateaccepted{ xx xx 2026}
+% \articletype{ARTICLE TEMPLATE}% Specify the article type or omit as appropriate
 
 \title{GeoSemantics: An Interactive Engine for Explainable, Multi-Scale Place Character from Heterogeneous OpenStreetMap Graphs}
 
-\author[a,b]{Angeliki Grammatikaki}
-\author[a,b]{Milena Vuckovic}
-\author[a]{Manuela Waldner}
-\affil[a]{Institute of Visual Computing and Human-Centered Technology, TU Wien, Vienna, Austria}
-\affil[b]{VRVis GmbH, Vienna, Austria}
+% \author{
+% \name{A.~N. Author\textsuperscript{a}\thanks{CONTACT A.~N. Author. Email: latex.helpdesk@tandf.co.uk, Nick Bearman Email: nick@nickbearman.com}, John Smith\textsuperscript{b} and Nick Bearman\textsuperscript{c}}
+% \affil{\textsuperscript{a}Taylor \& Francis, 4 Park Square, Milton Park, Abingdon, UK; \textsuperscript{b}Institut f\"{u}r Informatik, Albert-Ludwigs-Universit\"{a}t, Freiburg, Germany; \textsuperscript{c}CaGIS Cartographic Editor, Cartography and Geographic Information Society}
+% }
 
-\thanks{\textbf{CONTACT:} Angeliki Grammatikaki \quad \Letter : angiegram@icloud.com} % angeliki.grammatikaki@tuwien.ac.at
+\author{
+\name{
+Angeliki Grammatikaki\textsuperscript{a,b}\thanks{CONTACT Angeliki Grammatikaki. Email: angiegram@icloud.com},
+Milena Vuckovic\textsuperscript{a,b} and
+Manuela Waldner\textsuperscript{a}
+}
+\affil{
+\textsuperscript{a}Institute of Visual Computing and Human-Centered Technology, TU Wien, Vienna, Austria;
+\textsuperscript{b}VRVis GmbH, Vienna, Austria
+}
+}
 
-\keywords{GeoAI; graph attention networks; place embedding; OpenStreetMap; contrastive learning; explainable AI; interactive cartography}
+% \author{
+% }
 
-\Abstract{Understanding the functional character of a place (e.g., what distinguishes a historic market square from a residential suburb, or a mountain trailhead from a logistics zone) remains a core challenge in urban analytics, traditionally requiring proprietary, visual, or manually labeled data. We present a self-supervised system that learns interpretable place character representations exclusively from OpenStreetMap data. Our heterogeneous, multi-scale graph attention network (Typed-GAT) models each location as a spatial graph at radii of 200m, 700m, and 2km, distinguishing features like points of interest and transportation infrastructure. Trained by InfoNCE-based contrastive learning, it generates compact location embeddings and easily readable character fingerprints. A benchmark of 400 expert-analyzed locations in Austria, representing 10 different types, reveals that Typed-GAT improves on the separability of embeddings and Silhouette Scores relative to the base model, Flat-GAT. Although Urban2Vec and Tile2Vec, which rely on street-level and satellite imagery, achieve stronger nearest-neighbor retrieval, Typed-GAT offers a better global embedding architecture. This enables better semantic clustering, continuous character mapping, and clearer visual analytics. The models are components of an interactive engine that makes predictions understandable, demonstrates attention visualization, and enables fast ``what-if'' scenarios in under one second.}
-
-\newgeometry{top=20.0mm,bottom=40.0mm,left=15mm,right=15mm,headsep=8mm}
 \maketitle
-\restoregeometry
-\newpage
 
+\begin{abstract}
+Understanding the functional character of a place (e.g., what distinguishes a historic market square from a residential suburb, or a mountain trailhead from a logistics zone) remains a core challenge in urban analytics, traditionally requiring proprietary, visual, or manually labeled data. We present a self-supervised system that learns interpretable place character representations exclusively from OpenStreetMap data. Our heterogeneous, multi-scale graph attention network (Typed-GAT) models each location as a spatial graph at radii of 200m, 700m, and 2km, distinguishing features like points of interest and transportation infrastructure. Trained by InfoNCE-based contrastive learning, it generates compact location embeddings and easily readable character fingerprints. A benchmark of 400 expert-analyzed Austrian locations spanning 10 place types shows that Typed-GAT achieves the strongest embedding separability and clustering structure, improving on the base model, Flat-GAT. Image-based approaches (Urban2Vec, Tile2Vec), which rely on street-level and satellite imagery, retain a small advantage in nearest-neighbor retrieval, but Typed-GAT's more separable embedding space yields better semantic clustering, continuous character mapping, and clearer visual analytics. The models are components of an interactive engine that makes predictions understandable, demonstrates attention visualization, and enables fast ``what-if'' scenarios in under one second. Code and pretrained models will be made publicly available upon acceptance.
+% are publicly available at \url{https://github.com/AngelikiGram/GeoSemantics}.
+\end{abstract}
+
+\begin{keywords}
+GeoAI; graph attention networks; place embedding; OpenStreetMap; contrastive learning; explainable AI; interactive cartography
+\end{keywords}
 
 \section{Introduction}
 
 Place character --- the qualitative sense of what a location is, beyond zoning code \citep{tuan1977space} --- shapes critical decisions in urban planning, retail siting \citep{Montgomery01021998}, and everyday human wayfinding in complex landscapes \citep{lynch1960image}. 
-While humans intuitively grasp the character of a place (e.g., instantly distinguishing a bustling, historic market square from a quiet residential suburb), computational systems, given only a geographic coordinate or a postal code, remain blind to this functional reality. This gap is particularly important in frequently neglected rural, alpine, and peri-urban areas. In these locations, the OSM data signal is weaker --- fewer tagged features, lower tagging density --- yet the functional differences between a trailhead and a logistics zone are just as pronounced as those between two city blocks.
+While humans intuitively grasp place character (e.g., instantly distinguishing a bustling, historic market square from a quiet residential suburb), computational systems given only a coordinate or postal code remain blind to this functional reality --- particularly in neglected rural, alpine, and peri-urban areas, where the OSM signal is weaker (fewer tagged features, lower tagging density) yet the functional difference between a trailhead and a logistics zone is just as pronounced as between two city blocks.
 
-To bridge this gap, modern computational systems model place character using auxiliary sources such as mobility traces~\citep{place2vec}, street-level imagery~\citep{urban2vec}, or satellite imagery \citep{tile2vec}. However, these sources are proprietary, privacy-sensitive, and unevenly distributed, failing outside instrumented city cores \citep{Fonte-2017}. Mobility traces and check-in logs \citep{cheng2011exploring} are proprietary, privacy-sensitive, and sparse outside metropolitan cores, meaning they fail in rural, peri-urban, or developing areas. Street-level and satellite imagery capture visual style rather than functional character (e.g., confusing a public café with a private office within identical buildings)~\citep{10.1145/2830541}, whilst incurring significant acquisition and processing costs. Manual annotations also age quickly and struggle to transfer across cultural regions.
+To bridge this gap, modern computational systems model place character using auxiliary sources such as mobility traces and check-in logs~\citep{place2vec, cheng2011exploring}, street-level imagery~\citep{urban2vec}, or satellite imagery~\citep{tile2vec}. However, these sources are proprietary, privacy-sensitive, and unevenly distributed, failing outside instrumented city cores \citep{Fonte-2017}. Street-level and satellite imagery capture visual style rather than functional character (e.g., confusing a public café with a private office within identical buildings)~\citep{10.1145/2830541}, whilst incurring significant acquisition and processing costs. Manual annotations also age quickly and struggle to transfer across cultural regions.
 
-OpenStreetMap (OSM) provides a compelling alternative \citep{10.1109/MPRV.2008.80}. It is global, free, community-updated \citep{goodchild2007citizens}, and already encodes a rich, structured vocabulary of POIs, transport infrastructure, and natural features. The open research question is whether this topological vocabulary, structured as a spatial graph, is sufficient to learn a representation of place character without auxiliary data or labels, and whether that representation can be made legible to a human user rather than remaining an opaque vector.
+OpenStreetMap (OSM) provides a compelling alternative \citep{10.1109/MPRV.2008.80}: it is global, free, community-updated \citep{goodchild2007citizens}, and already encodes a rich, structured vocabulary of POIs, transport infrastructure, and natural features. The open research question is whether this topological vocabulary, structured as a spatial graph, suffices to learn place character without auxiliary data or labels, and whether that representation can be made legible to a human user rather than remaining an opaque vector.
 
 We present GeoSemantics, a self-supervised spatial engine that constructs multi-scale local graphs from raw OSM features around any coordinate and encodes them via a multi-scale Graph Attention Network (Typed-GAT) based on the GATv2 architecture \citep{brody2022attentivegraphattentionnetworks}. Trained purely via contrastive learning \citep{DBLP:journals/corr/abs-1807-03748}, the system produces dense 64-dimensional location embeddings for similarity retrieval and 7-dimensional interpretable character fingerprints derived by a decoupled saliency network, served through a real-time web application.
 
@@ -63,10 +100,10 @@ Our primary contributions are:
 \begin{enumerate}
 \item {Heterogeneous multi-scale graph construction}: We extend a GATv2 backbone \citep{brody2022attentivegraphattentionnetworks} with a five-class node-typing scheme (POI, Transport, Natural, Built, Place) and bearing-aware edge encodings across three spatial scales (200m, 700m, 2km), enabling the GNN to distinguish map elements and their spatial relationships at block, neighborhood, and district level.
 \item {Self-supervised training with decoupled saliency readout}: We train the GNN via InfoNCE contrastive learning under node-masking, requiring no labels. A lightweight saliency network decodes location embeddings into a 7-dimensional character fingerprint. The fingerprint's interpretability is deliberately decoupled so that the readout layer can be updated independently of the GNN.
-\item {Interpretable, interactive reasoning engine}: The models are served through a real-time application that exposes reasoning at three levels: natural-language explanations; saliency-thresholded attention overlays and precomputed map layers; and a counterfactual sandbox that reruns inference on user-modified graphs in under a second.
+\item {A framework for evaluating and interrogating learned place embeddings}: We couple the model with an inference pipeline that surfaces its predictions at three levels of granularity --- natural-language rationales grounded in the fingerprint decomposition, attention-weight overlays over the input graph, and a counterfactual protocol that re-executes inference on user-modified graphs to measure embedding sensitivity to local structural change. This provides a reproducible methodology for auditing what a heterogeneous GNN has learned about place character, independent of any specific interface implementation.
 \end{enumerate}
 
-The practical motivation for this interactive framing is worth stating directly. A practitioner presented with a label — say, ``Tourist Destination'' for a candidate development site — needs to trace that label back to the specific POI composition that produced it, verify which spatial scale is most influential, and test whether a proposed hotel cluster or the removal of an existing parking facility would shift the reading. Static thematic maps and offline embedding files cannot support this workflow: they fix the prediction at the time of computation and provide no mechanism for local intervention or scale-level interrogation. GeoSemantics is designed to close this loop by exposing every computational step --- from raw OSM tag ingestion, through graph construction and GNN message passing, to fingerprint rendering and archetype matching --- as an interactive, sub-second query accessible through a standard web browser. The system is therefore simultaneously a research contribution in spatial representation learning and a practical tool for exploratory place reasoning.
+A practitioner presented with a label — say, ``Tourist Destination'' for a candidate development site — needs to trace it back to the POI composition that produced it, verify which spatial scale is most influential, and test whether a proposed hotel cluster or the removal of a parking facility would shift the reading. Static thematic maps and offline embedding files cannot support this: they fix the prediction at computation time and offer no mechanism for local intervention or scale-level interrogation. GeoSemantics closes this loop by exposing every computational step --- from raw OSM tag ingestion, through graph construction and GNN message passing, to fingerprint rendering and archetype matching --- as an interactive, sub-second query in a standard web browser, making the system simultaneously a research contribution and a practical tool for exploratory place reasoning.
 
 The remainder of this paper is organized as follows. Section~\ref{sec:related} surveys related work in place representation, heterogeneous graph learning, explainability, and interactive visual analytics. Section~\ref{sec:method} details the data pipeline, model architecture, training procedure, and interactive engine. Section~\ref{sec:eval} presents quantitative benchmark results, per-class analysis, ablation experiments, and case studies in temporal drift and counterfactual simulation. Section~\ref{sec:discussion} discusses performance trade-offs, failure modes, and open directions, and Section~\ref{sec:conclusion} concludes.
 
@@ -75,7 +112,7 @@ The remainder of this paper is organized as follows. Section~\ref{sec:related} s
 \textbf{Place Representation and Urban Embeddings}
 Place2Vec~\citep{place2vec} learns POI co-occurrence embeddings from check-ins, capturing behavior-driven signals but failing beyond wealthy, instrumented urban cores. This sits within a broader family of region-embedding methods --- including POI2Vec~\citep{3298239.3298256} and Region2Vec-style approaches~\citep{luo2022urbanregionprofilingmultigraph} --- that similarly depend on mobility or check-in density and inherit the same coverage bias. Image-based techniques include Urban2Vec~\citep{urban2vec} and Tile2Vec~\citep{tile2vec}, which use street- or satellite-level imagery and carry corresponding acquisition costs. Structure-only techniques operate over road networks or POI proximity graphs: space syntax~\citep{hillier1984social} computes salience from street-network structure, while DeepWalk~\citep{Perozzi_2014} and Node2Vec~\citep{grover2016node2vecscalablefeaturelearning} apply random-walk skip-gram models to homogeneous proximity graphs but cannot distinguish edge semantics (e.g. road-to-caf\'e vs.\ caf\'e-to-caf\'e) --- a limitation our typed-edge design directly addresses. A recent survey of location encoding for GeoAI~\citep{mai2022review} identifies the lack of structural, topology-aware representations as a key gap in the literature, positioning graph-based spatial encoders as a promising direction for bridging raw geographic coordinates and functional place semantics.
 
-Feature salience connects our work to landmark models that incorporate visual, semantic, and structural aspects~\citep{Caduff, 10.1007/3-540-45799-2_17}, which we approximate by weighting OSM features using distance centrality, category uniqueness, and degree. Landmark salience has been studied extensively in urban settings dominated by buildings, but rarely in rural or alpine contexts --- precisely where our heterogeneous graph shows its largest gains. This asymmetry mirrors a broader pattern in the volunteered geographic information (VGI) literature: OSM's coverage and tagging density are known to be uneven and community-driven~\citep{haklay2010good, goodchild2007citizens, Fonte-2017}, a limitation our node-masking augmentation is designed to tolerate rather than assume away.
+Feature salience connects our work to landmark models that incorporate visual, semantic, and structural aspects~\citep{Caduff, 10.1007/3-540-45799-2_17}, which we approximate by weighting OSM features using distance centrality, category uniqueness, and degree. Landmark salience is studied extensively in building-dominated urban settings, but rarely in rural or alpine contexts --- precisely where our heterogeneous graph shows its largest gains. This mirrors a broader pattern in the volunteered geographic information (VGI) literature, where OSM's coverage and tagging density are known to be uneven and community-driven~\citep{haklay2010good, goodchild2007citizens, Fonte-2017}, a limitation our node-masking augmentation is designed to tolerate rather than assume away.
 
 \textbf{Heterogeneous and Self-Supervised Graph Learning}
 Heterogeneous GNNs that separate node and edge types --- HAN~\citep{wang2021heterogeneousgraphattentionnetwork}, HGT~\citep{hu2020heterogeneousgraphtransformer}, RGCN~\citep{schlichtkrull2017modelingrelationaldatagraph}, and HetGNN~\citep{10.1145/3292500.3330961} --- were developed primarily for knowledge graphs and citation networks. Applying this family to geospatial data introduces distinct constraints: the type taxonomy must fit the OSM tagging schema rather than a curated ontology, edges must encode continuous spatial relations (bearings, distances) alongside discrete types, and pooling must handle extreme class imbalance (Transport nodes constitute $\approx$40\% of our corpus). Our GATv2 backbone~\citep{brody2022attentivegraphattentionnetworks} adapts to these constraints via per-type embedding tables, type tokens, and stratified gated pooling.
@@ -226,27 +263,14 @@ where $\tilde{s}_i$ is the normalized GCN saliency score. The fingerprint is L1-
 \subsection{Interactive Engine}
 \label{sec:system}
 
-The trained models are served through a web application backed by a precomputed spatial index of 2.4 million OSM nodes stored in a KD-tree for $O(\log n)$ radius queries. The end-to-end inference pipeline --- graph construction, GNN forward pass, saliency computation, and fingerprint rendering --- runs on commodity CPU hardware with a median latency of 180ms per location on a single-core query, enabling sub-second interactivity without dedicated GPU infrastructure. The application is organized around three interpretability layers and three additional interaction modes.
+The trained models are served through a web application backed by a precomputed spatial index of 2.4 million OSM nodes stored in a KD-tree for $O(\log n)$ radius queries. The end-to-end inference pipeline --- graph construction, GNN forward pass, saliency computation, and fingerprint rendering --- runs on commodity CPU hardware with a median latency of 180ms per location on a single-core query, enabling sub-second interactivity without dedicated GPU infrastructure. 
+The application comprises three interpretability layers—Point Lens, Attention Overlay, and Continuous Semantic Layer --- and six interaction modes: Embedding Landscape, Sandbox, Time Machine, Compare Mode, Morph Mode, and Search Mode. Together, they support place interpretation, exploration, comparison, editing, temporal analysis, and semantic retrieval.
 
-\emph{Point Lens (Figure~\ref{fig:lens})} is the primary entry point. Clicking any coordinate triggers a radius query across all three scale bands (200m, 700m, 2km), constructs the typed spatial graph, runs a GNN forward pass, and displays: (i) a seven-dimensional character fingerprint rendered as a color-coded proportional bar chart; (ii) three-dimensional scale-attention weights indicating which spatial scale is dominant; and (iii) a natural-language reading that names the character label, the dominant and secondary fingerprint dimensions, the three highest-saliency POIs by name, and a nearest-archetype comparison at cosine similarity. A confidence caveat is appended if OSM coverage is sparse (fewer than 20 nodes within 2km). A representative reading for Hallstatt (47.5608\textdegree{}N, 13.6477\textdegree{}E) is: \emph{``Tourist Destination, predominantly Urban (53\%) with a secondary Tourism presence (35\%). Anchored by Hallstatt Lahn (B\"ackerei), Bella Milano, and Hallstatt Damsgasse. Identity is set at the Macro (2km) scale (46\%). Closest comparable archetype: Innsbruck (76\% similarity), 94\% confidence based on 258 features.''} The multi-select POI filter allows users to suppress or highlight individual nodes and observe their marginal contribution to the fingerprint.
+% \emph{Point Lens (Figure~\ref{fig:lens})} is the primary entry point. Clicking any coordinate triggers a radius query across all three scale bands (200m, 700m, 2km), constructs the typed spatial graph, runs a GNN forward pass, and displays: (i) a seven-dimensional character fingerprint rendered as a color-coded proportional bar chart; (ii) three-dimensional scale-attention weights indicating which spatial scale is dominant; and (iii) a natural-language reading that names the character label, the dominant and secondary fingerprint dimensions, the three highest-saliency POIs by name, and a nearest-archetype comparison at cosine similarity. A confidence caveat is appended if OSM coverage is sparse (fewer than 20 nodes within 2km). A representative reading for Hallstatt (47.5608\textdegree{}N, 13.6477\textdegree{}E) is: \emph{``Tourist Destination, predominantly Urban (53\%) with a secondary Tourism presence (35\%). Anchored by Hallstatt Lahn (B\"ackerei), Bella Milano, and Hallstatt Damsgasse. Identity is set at the Macro (2km) scale (46\%). Closest comparable archetype: Innsbruck (76\% similarity), 94\% confidence based on 258 features.''} The multi-select POI filter allows users to suppress or highlight individual nodes and observe their marginal contribution to the fingerprint.
 
-\emph{Attention Overlay (Figure~\ref{fig:attn})} visualizes GATv2 attention weights from the second message-passing layer as directed polylines linking POI pairs on the map. Edge color encodes source node type (Transport: blue; POI: green; Natural: teal; Built: grey; Place: purple) and edge thickness scales linearly with normalized attention weight. Only edges whose both endpoints exceed a saliency threshold of $0.3$ are rendered; self-loop attention is omitted. Comparing Flat-GAT and Typed-GAT overlays at the same location reveals a qualitative difference: Flat-GAT generates no qualifying edges in sparse alpine areas because homogeneous pooling fails to assign sufficient attention mass to rare node-type combinations, while Typed-GAT surfaces type-conditioned connections between Natural and POI nodes --- illustrating why the heterogeneous model extracts discriminative signal where the homogeneous one does not.
+\emph{Point Lens (Figure~\ref{fig:lens})} serves as the primary entry point. Clicking any coordinate constructs the multi-scale typed graph (200\,m, 700\,m, and 2\,km), performs a GNN forward pass, and displays: (i) a seven-dimensional character fingerprint as a color-coded bar chart, (ii) scale-attention weights indicating the dominant spatial scale, and (iii) a natural-language explanation summarizing the predicted character, dominant dimensions, most influential POIs, and nearest archetype. Confidence warnings are shown when OSM coverage is sparse (fewer than 20 nodes within 2\,km). For example, Hallstatt is classified as a \emph{Tourist Destination} with dominant Urban and Tourism characteristics, driven by nearby amenities and tourism infrastructure, and primarily determined by the 2\,km scale. Users can additionally filter individual POIs to inspect their marginal contribution to the fingerprint.
 
-\emph{Continuous Semantic Layer (Figure~\ref{fig:charlayer})} renders a full-country semantic surface by interpolating a precomputed $100\times100$ grid of fingerprints (3,729 cells across the Austrian land area) using inverse-distance weighting~\citep{10.1145/800186.810616} ($k=25$, power $1.6$). The raster is rendered as an RGBA heatmap with Gaussian blur ($\sigma=8$px) and exponential color mixing to suppress speckle. The layer resamples only viewport-visible cells on pan and zoom, maintaining smooth responsiveness across the full national extent.
-
-\emph{Embedding Landscape} renders a UMAP~\citep{mcinnes2020umapuniformmanifoldapproximation} projection (n\_neighbors=15, min\_dist=0.1) of all 7,627 precomputed 64-dimensional embeddings as an interactive scatterplot color-coded by character archetype, linked bidirectionally with the geographic basemap. Hovering a point in the scatterplot flies the map to the corresponding coordinate; panning the map highlights the in-viewport subset in the scatterplot. In Morph mode the user selects two anchor locations and drags a slider to interpolate their embeddings in the 64-dimensional space at steps of 10\%, triggering a full fingerprint recomputation at each step to show how character transitions between the two poles.
-
-\emph{Sandbox (Figure~\ref{fig:sandbox})} provides a counterfactual editing canvas. The user selects a location, which loads the live graph as a layer of draggable typed POI markers. New synthetic nodes can be brushed onto the canvas with configurable type and category; existing nodes can be deleted. Each edit rebuilds the spatial graph and triggers a full GNN forward pass, displaying the updated fingerprint alongside the original in a Before/After comparison panel. The embedding shift $\|\mathbf{z}_{\text{new}} - \mathbf{z}_{\text{orig}}\|_2$ is shown numerically, quantifying the distance-in-latent-space effect of the intervention.
-
-\emph{Time Machine (Figure~\ref{fig:history})} extracts historical OSM graph snapshots by querying the Overpass Attic API with timestamps from 2007 to the present, returning only nodes that existed at the requested date. Character fingerprints are computed for each snapshot and displayed as an animated timeline annotated with cumulative embedding drift per step. The Hallstatt animation shows a 2014 graph with 27 POIs classified as ``Urban Center'' that transitions to ``Tourist Destination'' by the present (186 POIs, cumulative drift 0.63) --- a trajectory reflecting both genuine tourism growth and the exponential increase in OSM contributor coverage over the same period. Node-count growth is rendered alongside the drift curve so users can visually distinguish coverage-driven from structure-driven label transitions. The interface provides controls to pause at any snapshot year, inspect the fingerprint at that year, and compare it against the present-day reading in a side-by-side panel. A coverage quality indicator is computed at each step as the ratio of nodes with more than one associated tag to total nodes, providing a proxy for tagging completeness that helps identify years where coverage gaps dominate the apparent drift signal.
-
-\emph{Compare Mode} allows a user to pin up to four locations simultaneously and display their fingerprints and embedding coordinates in a synchronized four-panel view. Each panel shows the full seven-dimensional proportional bar alongside the scale-attention breakdown and the natural-language reading. The embedding distance matrix between all selected locations is rendered as a heat map below the panels, enabling rapid visual comparison of pairwise similarity. Compare mode is intended for cross-location benchmarking tasks: a practitioner evaluating a candidate development site can select three reference locations of known character (e.g., two established tourist villages and one rural settlement) and observe where the candidate falls in both embedding space and character composition.
-
-\emph{Morph Mode} enables smooth interpolation between two anchor locations in the 64-dimensional embedding space. A slider divided into 10 steps moves linearly from $\mathbf{z}_A$ to $\mathbf{z}_B$; at each step $\lambda \in \{0, 0.1, \ldots, 1.0\}$, the interpolated embedding $\mathbf{z}_\lambda = (1-\lambda)\mathbf{z}_A + \lambda\mathbf{z}_B$ is decoded into a fingerprint by the same saliency-weighted projection used during inference. The fingerprint transition is animated as a stacked bar chart morphing between the two endpoint compositions, and the character label is re-derived from the dominant dimension at each step. Because contrastive embedding spaces are not guaranteed to be convex with respect to meaningful intermediate states, some interpolation steps may produce fingerprints that do not correspond to any real Austrian archetype (e.g., 50\% Urban and 50\% Nature simultaneously). The interface flags such transitions with a visual warning and reports the distance from the interpolated embedding to the nearest precomputed location as a proxy for ``off-manifold'' distance.
-
-\emph{Global Semantic Map} provides a country-wide overview of Austria's character landscape as a continuous color-coded heatmap. The underlying data are 3,729 precomputed fingerprints on a $100\times100$ grid, interpolated to screen resolution using inverse-distance weighting ($k=25$, power 1.6) and rendered as an RGBA raster with Gaussian smoothing ($\sigma=8$px). A dimension selector (pill filter) allows the user to isolate any one of the seven character dimensions, replacing the dominant-label color encoding with a continuous scale showing the raw dimension weight across the country. For example, selecting the Nature dimension reveals the spatial gradient from the dense urban corridor along the Danube to the high-Alpine interior. Selecting Tourism highlights the concentrated hotspots in Salzburg, the Tyrolian ski regions, and the Salzkammergut lake district against a low-Tourism background. The grid updates its interpolation on viewport zoom-in to use only in-viewport precomputed points, maintaining sub-200ms rendering latency at all zoom levels.
-
-\begin{figure}[htbp]
+\begin{figure}[h]
 \centering
 \begin{minipage}[c]{0.837\textwidth}
     \centering
@@ -261,82 +285,140 @@ The trained models are served through a web application backed by a precomputed 
 \label{fig:lens}
 \end{figure}
 
-\begin{figure}[htbp]
+\emph{Attention Overlay (Figure~\ref{fig:attn})} visualizes GATv2 attention weights from the second message-passing layer as directed polylines linking POI pairs on the map. Edge color encodes source node type (Transport: blue; POI: green; Natural: teal; Built: grey; Place: purple) and edge thickness scales linearly with normalized attention weight. Only edges whose both endpoints exceed a saliency threshold of $0.3$ are rendered; self-loop attention is omitted. Comparing Flat-GAT and Typed-GAT overlays at the same location reveals a qualitative difference: Flat-GAT generates no qualifying edges in sparse alpine areas because homogeneous pooling fails to assign sufficient attention mass to rare node-type combinations, while Typed-GAT surfaces type-conditioned connections between Natural and POI nodes --- illustrating why the heterogeneous model extracts discriminative signal where the homogeneous one does not.
+
+\begin{figure}[h]
 \centering
-\subfigure[]{\includegraphics[width=0.48\textwidth]{figs/attention_graph_v2.png}}
+\includegraphics[width=0.48\textwidth]{figs/attention_graph_v2.png}
 \hfill
-\subfigure[]{\includegraphics[width=0.48\textwidth]{figs/attention_graph_v3.png}}
-\caption{Attention overlay for Hallstatt (a) Flat-GAT (no edges) vs (b) Typed-GAT (type-colored polylines).}
+\includegraphics[width=0.48\textwidth]{figs/attention_graph_v3.png}
+\caption{Attention overlay for Hallstatt. Left: Flat-GAT (no edges). Right: Typed-GAT (type-colored polylines).}
 \label{fig:attn}
 \end{figure}
 
-\begin{figure}[htbp]
+% \emph{Continuous Semantic Layer (Figure~\ref{fig:charlayer})} renders a full-country semantic surface by interpolating a precomputed $100\times100$ grid of fingerprints (3,729 cells across the Austrian land area) using inverse-distance weighting~\citep{10.1145/800186.810616} ($k=25$, power $1.6$). The raster is rendered as an RGBA heatmap with Gaussian blur ($\sigma=8$px) and exponential color mixing to suppress speckle. The layer resamples only viewport-visible cells on pan and zoom, maintaining smooth responsiveness across the full national extent.
+
+% \emph{Continuous Semantic Layer (Figure~\ref{fig:charlayer})} renders a full-country semantic surface by interpolating a precomputed $100\times100$ grid of fingerprints (3,729 cells across the Austrian land area) using inverse-distance weighting~\citep{10.1145/800186.810616} ($k=25$, power $1.6$). The raster is rendered as an RGBA heatmap with Gaussian blur ($\sigma=8$px) and exponential color mixing to suppress speckle. The layer resamples only viewport-visible cells on pan and zoom, maintaining smooth responsiveness across the full national extent.
+% A dimension selector allows users to isolate any of the seven fingerprint dimensions, replacing the dominant-label visualization with a continuous intensity map. For example, selecting the Nature dimension reveals the transition from the urban Danube corridor to the high-Alpine interior, while Tourism highlights concentrated hotspots in Salzburg, Tyrol, and the Salzkammergut region.
+
+\emph{Continuous Semantic Layer (Figure~\ref{fig:charlayer})} renders a country-scale semantic surface by interpolating a precomputed $100\times100$ grid of fingerprints (3,729 valid cells) using inverse-distance weighting~\citep{10.1145/800186.810616} ($k=25$, power $1.6$). The resulting heatmap is smoothed with a Gaussian filter ($\sigma=8$px) and updates dynamically with pan and zoom interactions. A dimension selector allows users to visualize any of the seven fingerprint dimensions individually, revealing spatial patterns such as Nature-dominated alpine regions or Tourism hotspots.
+
+\begin{figure}[h]
 \centering
 \includegraphics[width=0.9\textwidth]{figs/fig_charlayer.png}
 \caption{Continuous semantic map layer.}
 \label{fig:charlayer}
 \end{figure}
 
-\begin{figure}[htbp]
+% \emph{Embedding Landscape (Figure~\ref{fig:embedding_landscape})} renders a UMAP~\citep{mcinnes2020umapuniformmanifoldapproximation} projection (n\_neighbors=15, min\_dist=0.1) of all 7,627 precomputed 64-dimensional embeddings as an interactive scatterplot color-coded by character archetype, linked bidirectionally with the geographic basemap. Hovering a point in the scatterplot flies the map to the corresponding coordinate; panning the map highlights the in-viewport subset in the scatterplot. In Morph mode the user selects two anchor locations and drags a slider to interpolate their embeddings in the 64-dimensional space at steps of 10\%, triggering a full fingerprint recomputation at each step to show how character transitions between the two poles.
+
+\emph{Embedding Landscape (Figure~\ref{fig:embedding_landscape})} renders a UMAP~\citep{mcinnes2020umapuniformmanifoldapproximation} projection ($n_{\mathrm{neighbors}}=15$, $\mathrm{min\_dist}=0.1$) of all 7,627 precomputed embeddings as an interactive scatterplot linked to the geographic map. Selecting a point centers the map on the corresponding location, while map navigation highlights nearby embeddings. Morph Mode interpolates between two selected locations in embedding space and recomputes the corresponding character fingerprints at 10\% intervals.
+
+\begin{figure}[h]
 \centering
-\begin{minipage}[c]{0.615\textwidth}
-    \centering
-    \subfigure[]{
-        \includegraphics[width=\linewidth]{figs/sandbox_all.png}
-    }
-\end{minipage}
-\hfill
-\begin{minipage}[c]{0.375\textwidth}
-    \centering
-    \vspace*{\fill}
-    \subfigure[]{
-        \includegraphics[width=\linewidth]{figs/hallstatt_umap.png}
-    }
-    \vspace*{\fill}
-\end{minipage}
-\caption{Interaction modes: (a) Sandbox edits, (b) Semantic landscape UMAP.}
+\includegraphics[width=0.95\textwidth]{figs/hallstatt_umap.png}
+\caption{Embedding Landscape: UMAP projection of 7,627 location embeddings linked to the geographic map.}
+\label{fig:embedding_landscape}
+\end{figure}
+
+\emph{Sandbox (Figure~\ref{fig:sandbox})} provides a counterfactual editing canvas. The user selects a location, which loads the live graph as a layer of draggable typed POI markers. New synthetic nodes can be brushed onto the canvas with configurable type and category; existing nodes can be deleted. Each edit rebuilds the spatial graph and triggers a full GNN forward pass, displaying the updated fingerprint alongside the original in a Before/After comparison panel. The embedding shift $\|\mathbf{z}_{\text{new}} - \mathbf{z}_{\text{orig}}\|_2$ is shown numerically, quantifying the distance-in-latent-space effect of the intervention.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{figs/sandbox_all.png}
+\caption{Sandbox mode. Editing OSM features and resulting character changes.}
 \label{fig:sandbox}
 \end{figure}
 
-\begin{figure}[htbp]
+% \begin{figure}[h]
+% \centering
+% \begin{minipage}[c]{0.615\textwidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{figs/sandbox_all.png}
+% \end{minipage}
+% \hfill
+% \begin{minipage}[c]{0.375\textwidth}
+%     \centering
+%     \vspace*{\fill}
+%     \includegraphics[width=\linewidth]{figs/hallstatt_umap.png}
+%     \vspace*{\fill}
+% \end{minipage}
+% \caption{Additional interaction modes. Left: sandbox edits, right: semantic landscape UMAP.}
+% \label{fig:sandbox}
+% \end{figure}
+
+\emph{Time Machine (Figure~\ref{fig:history})} retrieves historical OSM graph snapshots using the Overpass Attic API for dates between 2007 and the present. Character fingerprints are computed for each snapshot and displayed as an animated timeline together with cumulative embedding drift and node-count growth. Users can pause at any year, inspect the corresponding fingerprint, and compare it against the present-day reading in a side-by-side view. A coverage-quality indicator, defined as the ratio of nodes with multiple tags to total nodes, provides a proxy for tagging completeness and helps identify years where apparent drift may be driven by sparse data rather than structural change.
+
+\begin{figure}[h!]
 \centering
-\includegraphics[width=0.9\textwidth]{figs/hallstatt_2014_2026_historic_1.png}
+\includegraphics[width=0.85\textwidth]{figs/hallstatt_2014_2026_historic_1.png}
 \caption{Time Machine: Hallstatt character drift from 2014 (left) to present (right).}
 \label{fig:history}
+\end{figure}
+
+\emph{Compare Mode (Figure~\ref{fig:compare})} allows users to pin up to four locations and compare their fingerprints, scale-attention distributions, and embedding coordinates in a synchronized multi-panel view. A pairwise embedding-distance matrix is shown below the panels, enabling rapid assessment of similarity and differences between locations.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{figs/comp_mode.png}
+\caption{Compare Mode. Multi-location comparison of fingerprints and embedding similarities.}
+\label{fig:compare}
+\end{figure}
+
+\emph{Morph Mode (Figure~\ref{fig:morph})} enables interpolation between two anchor locations in the 64-dimensional embedding space. A slider divided into 10 steps moves linearly from $\mathbf{z}_A$ to $\mathbf{z}_B$; at each step $\lambda \in \{0, 0.1, \ldots, 1.0\}$, the interpolated embedding $\mathbf{z}_\lambda = (1-\lambda)\mathbf{z}_A + \lambda\mathbf{z}_B$ is projected into a character fingerprint using the same saliency-weighted mapping employed during inference. The resulting fingerprint transition is visualized as an animated stacked-bar chart, and the character label is recomputed at each step. To indicate potentially unrealistic intermediate states, the interface reports the distance from $\mathbf{z}_\lambda$ to the nearest precomputed location and flags embeddings that lie far from the observed data manifold.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{figs/morph_mode.jpg}
+\caption{Morph Mode. Embedding-space interpolation and fingerprint transitions.}
+\label{fig:morph}
+\end{figure}
+
+\emph{Search Mode (Figure~\ref{fig:search})} allows users to compose a desired place identity by adjusting the seven fingerprint dimensions manually. The system then retrieves the most similar precomputed locations using cosine similarity in embedding space and displays them as ranked search results. This enables exploratory queries such as finding locations that combine high Tourism and Nature characteristics while retaining a moderate Urban component.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.95\textwidth]{figs/search_mode.png}
+\caption{Search Mode. Users construct a desired semantic identity by adjusting fingerprint dimensions and retrieve the most similar locations across Austria.}
+\label{fig:search}
 \end{figure}
 
 \section{Results}
 \label{sec:eval}
 
-\subsection{Evaluation Setup and Main Results}
+We evaluate GeoSemantics along three complementary axes: benchmark performance against prior-work baselines, per-class and ablation analysis of the architecture, and its behavior under temporal drift and counterfactual intervention.
+
+\subsection{Evaluation Setup}
 \label{sec:benchmark}
-\label{sec:tradeoff}
-\label{sec:mainresults}
-\label{sec:baselines}
 
-\textbf{Evaluation Setup} We evaluate representations on a 400-location expert-labeled Austrian benchmark spanning ten place archetypes. The benchmark consists of locations manually selected across Austria, where the ground-truth classification was established through joint inspection of OSM tags, Austrian administrative geodata~\citep{datagvat2024}, UNWTO tourism classifications~\citep{unwto2008irts}, and the Federal Monuments Office (BDA) register~\citep{bda2024denkmalliste}. The ten archetypes --- Urban core, Residential suburb, Peri-urban, Village center, Tourism hotspot, Heritage area, Alpine/nature area, Rural/agricultural, Transport hub, and Industrial/infra --- span the full range of Austrian settlement types from Vienna's first district to remote Tyrolean alpine meadows. Each archetype contributes between 24 and 52 benchmark locations, with Urban core and Alpine/nature area as the two largest classes (52 and 48 locations respectively). Expert-labeled locations were selected to maximize intra-class geographic diversity: Urban core locations span Vienna, Graz, Linz, Salzburg, and Innsbruck rather than clustering in a single city.
+We evaluate representations on a 400-location expert-labeled Austrian benchmark spanning ten place archetypes. The benchmark consists of locations manually selected across Austria, where the ground-truth classification was established through joint inspection of OSM tags, Austrian administrative geodata~\citep{datagvat2024}, UNWTO tourism classifications~\citep{unwto2008irts}, and the Federal Monuments Office (BDA) register~\citep{bda2024denkmalliste}. The ten archetypes --- Urban core, Residential suburb, Peri-urban, Village center, Tourism hotspot, Heritage area, Alpine/nature area, Rural/agricultural, Transport hub, and Industrial/infra --- span the full range of Austrian settlement types from Vienna's first district to remote Tyrolean alpine meadows. Each archetype contributes between 24 and 52 benchmark locations, with Urban core and Alpine/nature area as the two largest classes (52 and 48 locations respectively). Expert-labeled locations were selected to maximize intra-class geographic diversity: Urban core locations span Vienna, Graz, Linz, Salzburg, and Innsbruck rather than clustering in a single city.
 
-Classification followed a two-stage process. In the first stage, two independent annotators each assigned a primary archetype to each candidate location based on visual inspection of the OSM map, satellite imagery, and available administrative data. In the second stage, disagreements were resolved by consensus using the BDA monument register, UNWTO definitions, and Austrian municipal statistics; locations that received divergent first-stage labels were replaced with unambiguous alternatives. The final benchmark has a single agreed archetype per location and requires at least three georeferenced OSM features within a 500m radius. Inter-annotator agreement before consensus resolution was 79\%, with most disagreements arising at the boundary between Village center and Peri-urban archetypes, reflecting the genuine semantic ambiguity of transitional settlement types. The full per-archetype location count ranges from 24 (Transport hub) to 52 (Urban core), with most archetypes contributing 36--44 locations.
+Classification followed a two-stage process. First, two independent annotators each assigned a primary archetype based on visual inspection of the OSM map, satellite imagery, and available administrative data. Second, disagreements were resolved by consensus using the BDA monument register, UNWTO definitions, and Austrian municipal statistics; locations with divergent first-stage labels were replaced with unambiguous alternatives. The final benchmark has a single agreed archetype per location and requires at least three georeferenced OSM features within a 500m radius. Inter-annotator agreement before consensus resolution was 79\%, with most disagreements arising at the boundary between Village center and Peri-urban archetypes, reflecting the genuine semantic ambiguity of transitional settlement types.
 
 Unsupervised evaluation uses three metrics. Retrieval $P@3$~\citep{1394399} measures the fraction of the three nearest embedding neighbors sharing the query archetype, averaged across all benchmark locations. Silhouette Score~\citep{ROUSSEEUW198753} measures mean intra-cluster cohesion relative to the nearest out-cluster. Embedding Separability ($\mathrm{sep} = \mathrm{intra} / (\mathrm{intra} + \mathrm{inter})$), in the spirit of intra-/inter-class separation criteria~\citep{4766909}, is our primary metric because it is less sensitive to class-size imbalance than Silhouette Score and assesses the global structure of the embedding space rather than local neighborhood purity.
 
-We additionally report three tiers of character-fingerprint accuracy to overcome a measurement artifact in strict argmax matching. Strict accuracy requires the predicted dominant dimension (argmax of the fingerprint) to match the expert-assigned expected dimension exactly. This measure is deliberately conservative: a Heritage area location that produces a Tourism-dominant fingerprint is counted as incorrect even though Tourism is a semantically adjacent label for heritage sites with high visitor flow. Top-2 accuracy accepts the expected dimension in the top-two fingerprint positions. Class-compatible accuracy accepts any prediction from a pre-specified set of semantically adjacent dimensions per archetype --- for example, the compatible set for Heritage area is \{Heritage, Tourism, Urban\} because all three dimensions plausibly describe a location with significant historical built environment. These three tiers allow us to distinguish systematic category confusion (expected dimension never appears in top-2) from label-adjacency effects (dimension appears but is not dominant), which have very different implications for model improvement.
+We additionally report three tiers of character-fingerprint accuracy to overcome a measurement artifact in strict argmax matching. Strict accuracy requires the predicted dominant dimension to match the expert-assigned expected dimension exactly; this is deliberately conservative, as a Heritage area location producing a Tourism-dominant fingerprint is counted as incorrect even though Tourism is semantically adjacent for heritage sites with high visitor flow. Top-2 accuracy accepts the expected dimension in the top two fingerprint positions. Class-compatible accuracy accepts any prediction from a pre-specified set of semantically adjacent dimensions per archetype --- e.g., the compatible set for Heritage area is \{Heritage, Tourism, Urban\}. These tiers distinguish systematic category confusion (expected dimension never in top-2) from label-adjacency effects (present but not dominant), which have different implications for model improvement.
 
-We compare Flat-GAT and Typed-GAT against three re-implemented prior-work baselines (Place2Vec, Tile2Vec, and Urban2Vec) and a TF-IDF bag-of-categories model, using identical retrieval-\patat{3} and separability functions on the Austrian benchmark (baseline figures reported below). Place2Vec uses a 5-word co-occurrence window, Tile2Vec learns triplets from orthophotos, and Urban2Vec fuses ResNet-50 street-view features with a GCN.
+\subsection{Main Results}
+\label{sec:mainresults}
+
+\textbf{Baselines Comparison} We compare Flat-GAT and Typed-GAT against three re-implemented prior-work baselines (Place2Vec, Tile2Vec, and Urban2Vec) and a TF-IDF bag-of-categories model, using identical retrieval-$P@3$
+and separability functions on the Austrian benchmark (baseline figures reported below). Place2Vec uses a 5-word co-occurrence window, Tile2Vec learns triplets from orthophotos, and Urban2Vec fuses ResNet-50 street-view features with a GCN.
 
 \begin{table}[htbp]
 \centering
-\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}lccc}
+\small
+\begin{tabular}{lccc}
 \toprule
-\textbf{Model} & \textbf{Retrieval \patat{3}} & \textbf{Silhouette Score} & \textbf{Separability} \\
+Model & P@3 & Silhouette & Separability \\
 \midrule
-Flat-GAT --- homogeneous GATv2   & 0.686 & -0.060 & 0.582 \\
-Typed-GAT --- heterogeneous GATv2 & \textbf{0.697} & \textbf{-0.048} & \textbf{0.695} \\
-TF-IDF (no graph)          & 0.512 & -0.114 & 0.529 \\
+Flat-GAT (homogeneous GATv2) & 0.686 & -0.060 & 0.582 \\
+Typed-GAT (heterogeneous GATv2) & \textbf{0.697} & \textbf{-0.048} & \textbf{0.695} \\
+TF-IDF (no graph) & 0.512 & -0.114 & 0.529 \\
 \midrule
-Typed-GAT gain over Flat-GAT            & $+$0.011 & $+$0.012 & $+$0.113 \\
+Typed-GAT gain over Flat-GAT & +0.011 & +0.012 & +0.113 \\
 \bottomrule
-\end{tabular*}
+\end{tabular}
 \caption{Benchmark results on the 400-location expert-labeled Austrian benchmark.}
 \label{tab:benchmark}
 \end{table}
@@ -361,13 +443,9 @@ Typed-GAT gain & $+$0.035 & $+$0.140 & $+$0.130 \\
 \label{tab:characc}
 \end{table}
 
-The Rural/Alpine-focused subset confirms Typed-GAT's structural advantage in sparse geometries. Restricting to the combined Alpine/nature and Rural/agricultural classes, Typed-GAT's multi-scale heterogeneous architecture produces gains of +28.7\% and +24.0\% respectively (Figure~\ref{fig:master}B), demonstrating that type-stratified pooling extracts meaningful topological signals even when absolute POI density is very low.
+The Rural/Alpine-focused subset confirms Typed-GAT's structural advantage in sparse geometries: on the union of the Alpine/nature and Rural/agriculture classes, Typed-GAT gains +28.7\% and +24.0\% respectively (Figure~\ref{fig:master}B), showing that type-wise pooling remains effective even at very low POI density.
 
-\textbf{Qualitative Case Study} The quantitative gains are grounded in concrete model behavior. Consider two locations at opposite ends of the density spectrum: the historic center of Hallstatt (47.5608\textdegree{}N, 13.6477\textdegree{}E, 203 OSM nodes within 2km) and an alpine coordinate in the Grossglockner massif (11 OSM nodes within 2km). For Hallstatt, Typed-GAT correctly assigns a Tourist Destination reading (53\% Urban, 35\% Tourism) with dominant identity at the 2km macro scale, where the ring of tourist infrastructure --- waterfront hotels, ferry terminals, and tour operators --- reinforces the tourism signal above the generic commercial backdrop. Flat-GAT assigns an Urban core reading, failing to distinguish the tourist overlay from generic commercial density. For the Grossglockner alpine location, Typed-GAT reads 82\% Nature with the 200m scale dominant, anchoring on the small cluster of natural nodes at immediate proximity. Adding 10 synthetic Tourism POIs (hotel, cable car) shifts the label to Tourist Destination with an embedding displacement of 1.01 --- demonstrating high intervention sensitivity in sparse graphs. Flat-GAT assigns a confused Urban/Nature split to the same alpine location, reflecting the absence of type conditioning: without knowing that the nearest nodes are Natural features rather than Transport features, homogeneous pooling defaults toward the dataset majority prior.
-
-Typed-GAT achieves the highest separability (0.695) compared to Urban2Vec (0.573) and Tile2Vec (0.521). On retrieval, visual models lead due to image features (Urban2Vec: 0.734, Tile2Vec: 0.657), compared to Typed-GAT's 0.697. However, Typed-GAT outperforms the non-visual Place2Vec baseline (0.555 P@3, 0.496 separability) and Flat-GAT on all three metrics.
-
-\begin{figure}[htbp]
+\begin{figure}[h]
 \centering
 \includegraphics[width=\textwidth]{figs/master_figure.png}
 \caption{GeoSemantics Typed-GAT Performance Evaluation.}
@@ -375,16 +453,18 @@ Typed-GAT achieves the highest separability (0.695) compared to Urban2Vec (0.573
 \end{figure}
 
 \subsection{Per-Class Analysis and Ablation Study}
-\label{sec:perclass}
-\label{sec:ablation}
 
 As shown in Figure~\ref{fig:master}B, Typed-GAT improves class boundaries in 8 out of 10 categories, with major gains in sparse Alpine/nature (+28.7\%) and Rural/agricultural (+24.0\%) environments, as well as Peri-urban fringes (+18.9\%) and Heritage areas (+5.0\%). The two remaining categories, Village center and Industrial/infrastructure, show small declines ($-$5.1\% and $-$2.9\% respectively). These two archetypes share a structural property: both are Transport-dominated at the 200m scale. Village centers are characterized by a junction of rural roads with a small cluster of generic POIs (pharmacy, post office, bank) that are difficult to distinguish from a residential suburb's commercial strip. Industrial estates are dominated by access roads, large buildings, and loading bays --- node types that Flat-GAT's global mean pooling averages together effectively, while Typed-GAT's per-type gating can lose the holistic ``all infrastructure'' signal when types are present in highly unequal proportions.
 
-The Village center failure deserves particular scrutiny because it is the archetype where Typed-GAT's type conditioning most clearly backfires. In a typical Village center graph, Transport nodes (rural road junctions and bus stops) outnumber POI nodes by approximately 4:1. Flat-GAT averages the full node set and assigns a moderate Infrastructure signal, which loosely matches the rural road topology. Typed-GAT gates each type independently: the Transport pool receives high attention from the road junctions, but the POI pool is so sparse (often two or three nodes) that the per-type gated aggregator in Eq.~\eqref{eq:typepool} reduces to a near-degenerate mean over a trivial set. The fused type-weighted embedding then amplifies the Transport signal at the expense of the Community and Rural signals that would distinguish the village from a highway interchange. This mode of failure motivates a minimum-count guard on the per-type pooling: if fewer than five nodes of a given type are present within the graph, that type's pooled embedding should be suppressed rather than included at full weight in the MLP-driven fusion step.
+The Village center failure deserves scrutiny as the archetype where type conditioning most clearly backfires. Transport nodes (rural road junctions, bus stops) outnumber POI nodes roughly 4:1 in a typical Village center graph. Flat-GAT averages the full node set into a moderate Infrastructure signal that loosely matches the rural road topology. Typed-GAT instead gates each type independently: the Transport pool draws high attention from the junctions, while the POI pool is so sparse (often two or three nodes) that the gated aggregator in Eq.~\eqref{eq:typepool} reduces to a near-degenerate mean, letting the fused embedding amplify the Transport signal at the expense of the Community and Rural signals that would distinguish a village from a highway interchange. This motivates a minimum-count guard: types with fewer than five nodes should be suppressed rather than fused at full weight.
 
-The Industrial/infra decline is more subtle. The archetypal Austrian industrial estate combines large Built nodes (warehouses, factory halls), Transport nodes (loading bay roads, rail sidings), and a minimal POI layer (security booth, canteen). Flat-GAT's global mean captures the co-occurrence of these types as a holistic ``heavy infrastructure'' signal. Typed-GAT separates them: the Built pool is correctly enriched, but the Transport pool fires strongly on the access roads, creating a representation that resembles a Transport hub more than an Industrial site. Future work could address this by adding a super-type fusion residual connection that bypasses the per-type gating when all types are co-located within a 200m radius --- preserving the holistic signal that Flat-GAT extracts by default.
+The Industrial/infra decline is subtler. The archetypal Austrian industrial estate combines large Built nodes (warehouses, factory halls), Transport nodes (loading bay roads, rail sidings), and a minimal POI layer. Flat-GAT's global mean captures their co-occurrence as a holistic ``heavy infrastructure'' signal; Typed-GAT separates them, correctly enriching the Built pool but letting the Transport pool fire strongly on access roads, yielding a representation closer to a Transport hub than an Industrial site. A super-type fusion residual that bypasses per-type gating when all types are co-located within 200m could preserve Flat-GAT's holistic signal here.
 
-Removing node-type identity tokens and single-scale restrictions decreases separability by 0.184 each (Figure~\ref{fig:master}C), with Transport-node removal close behind ($-$0.120), confirming that type-conditioned attention and multi-scale context are load-bearing components. Built-node ablation causes complete structural collapse (separability to 0.000), proving that built infrastructure anchors the embedding space: without building and man-made infrastructure nodes, the model loses the topological reference frame that distinguishes a residential block from an industrial site or a tourist quarter. The result is counter-intuitive at first glance --- Built nodes ($\approx$30\% of the Austrian corpus) seem like background features rather than discriminative signals. However, their role is precisely to provide the geometric scaffolding against which more semantically loaded node types (Tourism, Heritage) are interpreted: a \texttt{tourism=hotel} adjacent to large \texttt{building=industrial} nodes reads very differently from the same hotel tag adjacent to \texttt{building=church} and \texttt{historic=monastery}. Without Built nodes, these contextual contrasts collapse. The Bearing ablation produces negligible change (0.695 unchanged), suggesting that orientation information contributes minimal marginal benefit given that distance and type signals already carry most of the discriminative signal for Austrian spatial layouts; however, bearing is retained in the final model because it adds no memory overhead and may prove beneficial in datasets with strongly anisotropic grid-based street networks.
+Removing node-type identity tokens and single-scale restrictions decreases separability by 0.184 each (Figure~\ref{fig:master}C), with Transport-node removal close behind ($-$0.120), confirming that type-conditioned attention and multi-scale context are load-bearing components. Built-node ablation causes complete structural collapse (separability to 0.000), proving that built infrastructure anchors the embedding space: without building and man-made infrastructure nodes, the model loses the topological reference frame that distinguishes a residential block from an industrial site or a tourist quarter. The result is counter-intuitive at first glance --- Built nodes ($\approx$30\% of the Austrian corpus) seem like background features rather than discriminative signals. However, their role is precisely to provide the geometric scaffolding against which more semantically loaded node types (Tourism, Heritage) are interpreted: a \texttt{tourism=hotel} adjacent to large \texttt{building=industrial} nodes reads very differently from the same hotel tag adjacent to \texttt{building=church} and \texttt{historic=monastery}. Without Built nodes, these contextual contrasts collapse. The Bearing ablation produces negligible change (0.695 unchanged), suggesting orientation contributes little marginal benefit given that distance and type signals already carry most of the discriminative signal here; it is retained regardless, as it adds no memory overhead and may help on strongly anisotropic grid-based street networks.
+
+\textbf{Qualitative Case Study} Consider two locations at opposite ends of the density spectrum: the historic center of Hallstatt (47.5608\textdegree{}N, 13.6477\textdegree{}E, 203 OSM nodes within 2km) and an alpine coordinate in the Grossglockner massif (11 OSM nodes within 2km). For Hallstatt, Typed-GAT correctly identifies Tourist Destination (53\% Urban, 35\% Tourism), with the lakeside ring of hotels, ferries, and tour operators reinforcing the tourism signal above the generic commercial background at the 2km macro scale; Flat-GAT instead gives Urban core, unable to separate the tourist layer from the generic commercial one. For Grossglockner, Typed-GAT correctly reads 82\% Nature at the dominant 200m scale, anchored on the small nearby cluster of natural nodes; adding 10 synthetic Tourism POIs (hotel, cable car) flips the classification to Tourist Destination with an embedding drift of 1.01, showing high intervention sensitivity in sparse graphs. Flat-GAT instead gives an ambiguous Urban/Nature mixture for the same site, since without type conditioning it cannot tell that the nearby nodes are Natural rather than Transport and pools toward the dataset prior.
+
+Typed-GAT reaches the highest separability (0.695) versus Urban2Vec (0.573) and Tile2Vec (0.521), which lead on retrieval (0.734, 0.657 vs.\ Typed-GAT's 0.697) due to their image features. Typed-GAT still outperforms non-visual rival Place2Vec (0.555 P@3, 0.496 separability) and Flat-GAT on all three metrics.
 
 \subsection{Temporal Drift and Counterfactual Simulation}
 \label{sec:temporal}
@@ -401,19 +481,32 @@ Adding 10 synthetic POIs to Hallstatt (203 existing POIs) shifts Tourism by +4\%
 
 \textbf{Retrieval--Separability Trade-off} Visual models (Urban2Vec, Tile2Vec) achieve higher point-to-point retrieval precision ($P@3$ of 0.734 and 0.657) than Typed-GAT (0.697), but Typed-GAT leads in global embedding separability (0.695 vs.\ 0.573 and 0.521). These metrics measure fundamentally different properties: retrieval $P@3$ rewards local neighborhood purity, while separability rewards global cluster structure. Visual models excel at local retrieval because street-level imagery and satellite tiles carry rich visual texture that trivially distinguishes a café terrace from an industrial loading bay. However, this visual richness also means their embeddings capture aesthetic similarity rather than fine-grained functional structure at the global scale. For applications such as the UMAP Morph mode --- where continuous transitions between place types depend on global cluster geometry rather than nearest-neighbor purity --- Typed-GAT's higher separability is the operative metric. Visual models also degrade markedly in Alpine and Rural regions where Street View imagery is absent or incomplete~\citep{Fonte-2017}; here, Typed-GAT's multi-scale heterogeneous pooling extracts topological signals where image-based models have none. On character fingerprint accuracy the gap is more pronounced: because visual baselines produce opaque embeddings with no fingerprint decomposition mechanism, they cannot participate in the three-tier character accuracy evaluation at all, making them unsuitable for the interactive explanation use case that motivates this system. This represents a fundamental architectural trade-off between visual discriminability and semantic legibility that is not resolvable by simply adding a classification head to a visual encoder.
 
-\textbf{Saliency Decoupling and Tag-Vocabulary Limitations} The saliency network is deliberately trained decoupled from contrastive learning to ensure interpretability stability: if saliency were a differentiable component of the contrastive loss, gradient pressure could distort feature importance to minimize loss rather than to reflect human-meaningful landmark salience. The decoupled formula assigns 50\% weight to distance centrality, 30\% to category uniqueness, and 20\% to node degree, following landmark-salience conventions from the cognitive navigation literature~\citep{Caduff, 10.1007/3-540-45799-2_17}. A known limitation arises from OSM tag-vocabulary mismatch: commercial tourism fabric (hotels, tourist shops, tour operators) often carries generic \texttt{amenity} or \texttt{shop} tags indistinguishable from a neighborhood convenience store. The saliency heuristic misclassifies such nodes as Urban/Commercial, while Typed-GAT's unsupervised contrastive embedding resolves the ambiguity by learning that tourist POI clusters in dense waterfront locations have a different topological neighborhood structure than the same tag types in a suburban residential strip. The gap between strict character accuracy (26.9\%) and top-2 accuracy (50.7\%) is primarily attributable to this vocabulary mismatch: the expected dimension is present but outranked by the Urban signal in locations where the fingerprint correctly identifies the secondary character (Tourism, Heritage) but the raw tag count of \texttt{amenity=*} nodes dominates the first position. Future work could address this gap by incorporating OSM tag ontologies (e.g., distinguishing \texttt{tourism=hotel} from \texttt{amenity=restaurant}) as secondary feature signals in the saliency formula, or by fine-tuning the saliency network on a small set of human-annotated landmark importance ratings.
+\textbf{Saliency Decoupling and Tag-Vocabulary Limitations} The saliency network is deliberately trained decoupled from contrastive learning to ensure interpretability stability: if saliency were a differentiable component of the contrastive loss, gradient pressure could distort feature importance to minimize loss rather than to reflect human-meaningful landmark salience. The decoupled formula assigns 50\% weight to distance centrality, 30\% to category uniqueness, and 20\% to node degree, following landmark-salience conventions from the cognitive navigation literature~\citep{Caduff, 10.1007/3-540-45799-2_17}. A known limitation arises from OSM tag-vocabulary mismatch: commercial tourism fabric (hotels, tourist shops, tour operators) often carries generic \texttt{amenity} or \texttt{shop} tags indistinguishable from a neighborhood convenience store. The saliency heuristic misclassifies such nodes as Urban/Commercial, while Typed-GAT's contrastive embedding resolves the ambiguity by learning that tourist POI clusters in dense waterfront locations have a different topological structure than the same tags in a suburban residential strip. The gap between strict (26.9\%) and top-2 (50.7\%) accuracy is largely attributable to this mismatch: the expected dimension is present but outranked by the Urban signal where the raw tag count of \texttt{amenity=*} nodes dominates the first position. Future work could incorporate OSM tag ontologies (e.g., distinguishing \texttt{tourism=hotel} from \texttt{amenity=restaurant}) as secondary saliency features, or fine-tune the saliency network on human-annotated landmark importance ratings.
 
-\textbf{Baseline Failure Modes} The TF-IDF bag-of-categories baseline fails at sparse sites because it requires sufficient raw tag density to produce reliable frequency estimates; at locations with fewer than ten POIs, TF-IDF vectors degenerate to near-zero or single-category documents. Zero accuracy on Tourism and Heritage archetypes reflects a deeper tag-vocabulary problem: the \texttt{shop=*} and \texttt{amenity=*} keys are too generic to discriminate luxury tourism from neighborhood retail, so category-based models assign the majority-class Urban label to both. The Leave-One-Out probe collapses onto majority classes because the benchmark is class-imbalanced, and small minority archetypes (Transport hub: 6 locations) lack sufficient neighbors for a reliable KNN signal. Typed-GAT's training size was half of Flat-GAT's ($N=500$ vs.\ $1{,}000$) yet achieves a 0.113 separability gain, suggesting that the architectural benefit of type-stratified pooling outweighs the statistical benefit of twice as many training examples for this task and setting. Place2Vec's performance ($P@3 = 0.555$, sep $= 0.496$) falls between TF-IDF and the GAT models, confirming that word-embedding analogies applied to category co-occurrence capture some useful spatial semantics but cannot substitute for graph-level structural reasoning over typed nodes. The cross-country evaluation (Austria, Germany, Czech Republic) reveals that baseline models degrade sharply across national boundaries where OSM community conventions differ: TF-IDF in particular is highly sensitive to tag-frequency distributions that shift when a different contributor community dominates. Typed-GAT shows more graceful degradation in the cross-country setting because its attention mechanism conditions on structural relationships rather than absolute tag frequencies.
+\textbf{Baseline Failure Modes} The TF-IDF bag-of-categories baseline fails at sparse sites because it requires sufficient raw tag density to produce reliable frequency estimates; at locations with fewer than ten POIs, TF-IDF vectors degenerate to near-zero or single-category documents. Zero accuracy on Tourism and Heritage archetypes reflects a deeper tag-vocabulary problem: the \texttt{shop=*} and \texttt{amenity=*} keys are too generic to discriminate luxury tourism from neighborhood retail, so category-based models assign the majority-class Urban label to both. The Leave-One-Out probe collapses onto majority classes because the benchmark is class-imbalanced, and small minority archetypes (Transport hub: 6 locations) lack sufficient neighbors for a reliable KNN signal. Typed-GAT's training size was half of Flat-GAT's ($N=500$ vs.\ $1{,}000$) yet achieves a 0.113 separability gain, suggesting the architectural benefit of type-stratified pooling outweighs the statistical benefit of more training examples here. Place2Vec's performance ($P@3 = 0.555$, sep $= 0.496$) falls between TF-IDF and the GAT models, confirming that category co-occurrence embeddings capture some spatial semantics but cannot substitute for graph-level structural reasoning over typed nodes. Cross-country evaluation (Austria, Germany, Czech Republic) shows baseline models degrading sharply across national boundaries where OSM tagging conventions differ, with TF-IDF especially sensitive to shifts in tag-frequency distributions; Typed-GAT degrades more gracefully because its attention conditions on structural relationships rather than absolute tag frequencies.
 
-\textbf{Generalization, Bias, and Ethical Considerations} Cross-country transfer is a significant open challenge. OSM's tagging schema is nominally global but its application is community-driven and culturally contingent~\citep{haklay2010good, Fonte-2017}: a \texttt{cafe} in Vienna and a \texttt{cafe} in Nairobi represent different functional realities, and tagging density varies dramatically between instrumented Western cities and data-sparse regions. The current model was trained and evaluated exclusively on Austrian data; applying it to other European countries would require retraining on locally stratified samples or developing domain-adaptation techniques for VGI transfer. Preliminary cross-country experiments on 50 German and 50 Czech benchmark locations (results not included in the main evaluation due to the absence of ground-truth archetype labels for those countries) show that retrieval $P@3$ degrades by approximately 0.08 and 0.12 respectively, with the largest losses in Heritage and Village center archetypes where local tagging conventions diverge most sharply from Austrian practice. A broader concern is that learned place character representations can encode and amplify existing mapping biases: if historically under-mapped communities appear ``Rural'' or unrecognized in OSM, a system trained on this data inherits and reproduces that characterization. The Time Machine's completeness annotation partially mitigates this by flagging coverage-confounded readings, but does not resolve the underlying data inequity. We recommend that any deployment of GeoSemantics in policy-relevant planning contexts include explicit OSM completeness thresholds and human review for locations with fewer than 20 georeferenced nodes within 2km, and that character readings for data-sparse locations be presented to users with a prominent uncertainty flag rather than a confident label.
+\textbf{Generalization, Bias, and Ethical Considerations} Cross-country transfer is a significant open challenge. OSM's tagging schema is nominally global but its application is community-driven and culturally contingent~\citep{haklay2010good, Fonte-2017}: a \texttt{cafe} in Vienna and a \texttt{cafe} in Nairobi represent different functional realities, and tagging density varies dramatically between instrumented Western cities and data-sparse regions. The current model was trained and evaluated exclusively on Austrian data; applying it elsewhere would require retraining on locally stratified samples or domain-adaptation techniques for VGI transfer. Preliminary experiments on 50 German and 50 Czech benchmark locations (excluded from the main evaluation for lack of ground-truth labels) show retrieval $P@3$ degrading by approximately 0.08 and 0.12 respectively, with the largest losses in Heritage and Village center archetypes where local tagging conventions diverge most from Austrian practice. A broader concern is that learned place character representations can encode and amplify existing mapping biases: if historically under-mapped communities appear ``Rural'' or unrecognized in OSM, a system trained on this data inherits that characterization. The Time Machine's completeness annotation partially mitigates this by flagging coverage-confounded readings, but does not resolve the underlying data inequity. We recommend that deployments in policy-relevant planning contexts include explicit OSM completeness thresholds and human review for locations with fewer than 20 georeferenced nodes within 2km, presenting data-sparse readings with a prominent uncertainty flag rather than a confident label.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
 GeoSemantics demonstrates that interpretable place character representations can be learned from OpenStreetMap tag topology alone, without proprietary imagery, mobility traces, or manual labels. The Typed-GAT model's heterogeneous, multi-scale graph attention network improves embedding separability by 0.113 over a homogeneous baseline, with the largest gains (+28.7\%, +24.0\%) in the sparse Alpine and Rural archetypes where visual models have no signal. The decoupled saliency network produces transparent seven-dimensional character fingerprints traceable to individual named POIs, and the interactive engine exposes these representations through sub-second point readings, saliency-thresholded attention overlays, viewport-linked UMAP projections, and a counterfactual sandbox that allows practitioners to prototype urban interventions and observe their predicted effect on place identity in real time. The three-tier character accuracy evaluation demonstrates that while strict argmax matching underreports model quality (26.9\%), the semantically-aware top-2 (50.7\%) and class-compatible (50.9\%) metrics confirm that the representations encode meaningful place semantics rather than random signals. The temporal analysis across five Austrian locations exposes a fundamental ambiguity in place character drift that can be partially resolved through node-count co-visualization, and the ablation study pinpoints built infrastructure nodes as the load-bearing component of the embedding space.
 
-Three open directions stand out for future work. First, \emph{multi-country transfer}: training on a pan-European stratified sample and developing domain-adaptation techniques for VGI transfer would extend the system beyond Austria and address the tagging-schema heterogeneity documented across OSM communities. Promising approaches include federated training on national OSM extracts with shared encoder weights and country-specific embedding tables, and zero-shot transfer via meta-learning over a diverse set of source countries. The preliminary cross-country degradation observed in German and Czech evaluation sets ($-$0.08 and $-$0.12 $P@3$ respectively) suggests that transfer requires explicit adaptation rather than simple domain shift tolerance. Second, \emph{tag-vocabulary enrichment}: integrating tag \emph{value} information (e.g., distinguishing \texttt{tourism=hotel} from \texttt{tourism=museum}) into the node feature vector and saliency formula would reduce the Tourism and Heritage classification failures that currently inflate the gap between strict and class-compatible accuracy. A lightweight approach would extend the 32-dimensional bag-of-keys vector to include a smaller bag of high-frequency \emph{key=value} pairs (e.g., \texttt{tourism=hotel}, \texttt{historic=castle}, \texttt{amenity=school}) without retraining the full architecture. Third, \emph{formal user evaluation}: a structured study with urban planners, GIS analysts, and community geographers would assess whether the fingerprint reading, attention overlay, and sandbox outputs support genuine decision-making or introduce new forms of algorithmic opacity. The current evaluation is entirely quantitative; human-factors evidence is essential before any deployment in policy-relevant planning workflows, and would provide ground truth on which of the seven interaction modes are actually used, which are ignored, and where the natural-language generator produces readings that are technically correct but practically misleading. GeoSemantics represents a step toward a generation of geospatial AI tools that are not only accurate but also legible, contestable, and responsive to the practitioners who use them.
+Three open directions stand out for future work. First, \emph{multi-country transfer}: training on a pan-European stratified sample and developing domain-adaptation techniques for VGI transfer would extend the system beyond Austria and address the tagging-schema heterogeneity across OSM communities, e.g.\ via federated training on national extracts with shared encoder weights and country-specific embedding tables, or zero-shot transfer via meta-learning. The preliminary cross-country degradation observed in German and Czech evaluation sets ($-$0.08 and $-$0.12 $P@3$) suggests transfer requires explicit adaptation rather than simple domain-shift tolerance. Second, \emph{tag-vocabulary enrichment}: integrating tag \emph{value} information (e.g., distinguishing \texttt{tourism=hotel} from \texttt{tourism=museum}) into the node feature vector and saliency formula would reduce the Tourism and Heritage classification failures that inflate the gap between strict and class-compatible accuracy, e.g.\ by extending the 32-dimensional bag-of-keys vector with a small bag of high-frequency \emph{key=value} pairs without retraining the full architecture. Third, \emph{formal user evaluation}: a structured study with urban planners, GIS analysts, and community geographers would assess whether the fingerprint reading, attention overlay, and sandbox outputs support genuine decision-making or introduce new algorithmic opacity, and would clarify which interaction modes are actually used and where the natural-language generator produces readings that are technically correct but practically misleading. GeoSemantics represents a step toward geospatial AI tools that are not only accurate but also legible, contestable, and responsive to the practitioners who use them.
 
-\bibliographystyle{tfcad}
+% \section*{Disclosure statement}
+
+% No potential conflict of interest was reported by the author(s).
+
+% \section*{Data availability statement}
+
+% The data that support the findings of this study are openly available in GitHub at \url{https://github.com/AngelikiGram/GeoSemantics}. These data were derived from the following resource available in the public domain: OpenStreetMap, via the Geofabrik Austria extract \citep{geofabrik2024}, available at \url{https://download.geofabrik.de/europe/austria.html}.
+
+\section*{Acknowledgments}
+The authors acknowledge TU Wien Bibliothek for financial support through its Open Access Funding Programme. The VRVis GmbH is funded by BMIMI, BMWET, Tyrol, Vorarlberg and Vienna Business Agency in the scope of COMET - Competence Centers for Excellent Technologies (904918, 911654) which is managed by FFG.
+
+% \bibliographystyle{tfcad}
+% \bibliography{ref}
+\bibliographystyle{apalike}
 \bibliography{ref}
 \end{document}

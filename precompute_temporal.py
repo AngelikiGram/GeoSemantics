@@ -132,7 +132,7 @@ def _parse_years(raw):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--years', nargs='+', default=['2010', '2014', '2018', '2022', 'now'])
+    parser.add_argument('--years', nargs='+', default=['2010', '2014', '2018', '2020', '2022', '2024', 'now'])
     parser.add_argument('--fetch-radius', type=int, default=700)
     parser.add_argument('--char-radius', type=int, default=600)
     parser.add_argument('--delay', type=float, default=1.5)

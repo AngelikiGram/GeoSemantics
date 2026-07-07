@@ -45,7 +45,7 @@ _SEMANTIC_KEYS = {
 
 _HEADERS = {'User-Agent': 'GeoSemantics-research/1.0 (academic project; contact angiegram99@gmail.com)'}
 
-DEFAULT_YEARS = (2010, 2014, 2018, 2022, None)   # None = "now" (live, no date filter)
+DEFAULT_YEARS = (2010, 2014, 2018, 2020, 2022, 2024, None)   # None = "now" (live, no date filter)
 
 
 def _cache_path(lat, lon, year, radius):

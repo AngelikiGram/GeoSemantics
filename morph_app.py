@@ -876,8 +876,13 @@ def semantic_search():
     total = sum(target.values()) or 1
     target = {k: round(v / total, 4) for k, v in target.items() if v > 0}
 
+    # Search the full precomputed corpus (seeds + all places) so we always
+    # surface the closest existing match rather than only the 56 hand-picked
+    # archetype locations, which rarely land on an exact recipe.
+    pool = _all_places.get('places') or _data['locations']
+
     results = []
-    for loc in _data['locations']:
+    for loc in pool:
         dims = loc.get('semantic_dims', {})
         if not dims:
             continue
@@ -886,8 +891,8 @@ def semantic_search():
             'name':          loc.get('name', '?'),
             'lat':           loc['lat'],
             'lon':           loc['lon'],
-            'label':         loc.get('label', '-'),
-            'id':            loc['id'],
+            'label':         loc.get('label') or loc.get('dominant_dim', '-'),
+            'id':            loc.get('id', loc.get('name', '?')),
             'similarity':    sim,
             'semantic_dims': dims,
             'confidence':    loc.get('confidence', 0.5),
@@ -1066,7 +1071,7 @@ def temporal():
     lon  = float(body['lon'])
 
     temporal_years = []
-    for year in [2018, 2020, 2022, 2024]:
+    for year in [2010, 2014, 2018, 2020, 2022, 2024]:
         path = os.path.join('_poi_cache', f'temporal_{year}.json')
         if not os.path.exists(path):
             continue
@@ -1093,7 +1098,7 @@ def temporal():
     if len(temporal_years) >= 2:
         return jsonify({'snapshots': temporal_years, 'source': 'historical', 'has_data': True})
 
-    proxy = [(2018, 120), (2020, 250), (2022, 400), (2024, 600)]
+    proxy = [(2010, 60), (2014, 100), (2018, 180), (2020, 280), (2022, 400), (2024, 600)]
     snapshots = []
 
     if _inf is not None:
@@ -1119,7 +1124,7 @@ def temporal():
             return jsonify({'error': 'No location data.', 'has_data': False})
         dims = loc.get('semantic_dims', {})
         dominant = max(dims, key=dims.get) if dims else None
-        for year, factor in [(2018, 0.65), (2020, 0.82), (2022, 0.94), (2024, 1.0)]:
+        for year, factor in [(2010, 0.4), (2014, 0.55), (2018, 0.7), (2020, 0.85), (2022, 0.94), (2024, 1.0)]:
             if factor == 1.0:
                 sim_dims = dict(dims)
             else:
@@ -1138,7 +1143,7 @@ def temporal():
         'snapshots': snapshots,
         'source':    'simulated',
         'has_data':  True,
-        'note':      ('Scale-proxy mode: 120 m radius = 2018 core identity, 600 m = 2024 full context. '
+        'note':      ('Scale-proxy mode: 60 m radius = 2010 core identity, 600 m = 2024 full context. '
                       'Run precompute_temporal.py for real OSM historical snapshots.'),
     })
 
@@ -1227,7 +1232,7 @@ def temporal_live():
     name = body.get('name')
     try:
         import temporal as tmp
-        snaps = tmp.analyze_series(lat, lon, years=(2014, 2018, 2022, None),
+        snaps = tmp.analyze_series(lat, lon, years=(2014, 2018, 2020, 2022, 2024, None),
                                     fetch_radius=700, char_radius=600, delay=1.0)
     except Exception as e:
         import traceback; traceback.print_exc()
