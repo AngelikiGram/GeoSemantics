@@ -29,4 +29,5 @@ trial_latex.tex
 _poi_cache/
 memory/
 
-baseline_comparison/tile_cache/
+baseline_comparison/
+paper/

@@ -1,7 +1,0 @@
-method,precision_at_3,separability,n_successful,n_total,source
-"GeoSemantics V2 (homogeneous)",0.6858,0.5741,261,499,"validation_results/metrics.json (existing run)"
-"GeoSemantics V3 (heterogeneous)",0.6973,0.6556,261,499,"validation_results/metrics.json (existing run)"
-"TF-IDF (no graph, no learning)",0.5116,0.5287,,304,""
-"Place2Vec (POI co-occurrence)",0.5553,0.4957,488,499,"trained in this run (PPMI-SVD, see README)"
-"Tile2Vec (orthophoto only)",0.6566,0.5214,498,499,"trained in this run (CNN + triplet loss, see README)"
-"Urban2Vec (orthophoto + POI fusion)",0.7336,0.5727,488,499,"trained in this run (cross-modal contrastive fusion, orthophoto substitutes Street View, see README)"
