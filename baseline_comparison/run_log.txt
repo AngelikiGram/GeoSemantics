@@ -1,0 +1,74 @@
+[poi_cache] loaded 2,453,475 POIs (raw cache only, no GNN models)
+[evaluation] Loaded 213 synthetic locations. Total benchmark: 305 locations.
+=== Place2Vec ===
+[place2vec] building co-occurrence over 4000 spatial windows...
+[place2vec]   1000/4000 windows processed
+[place2vec]   2000/4000 windows processed
+[place2vec]   3000/4000 windows processed
+[place2vec]   4000/4000 windows processed
+=== Tile2Vec ===
+[tile2vec] fetching 780 training tiles...
+[tiles anchor] 50/260 fetched, 0 failed
+[tiles anchor] 100/260 fetched, 0 failed
+[tiles anchor] 150/260 fetched, 0 failed
+[tiles anchor] 200/260 fetched, 0 failed
+[tiles anchor] 250/260 fetched, 0 failed
+[tiles neighbor] 50/260 fetched, 0 failed
+[tiles neighbor] 100/260 fetched, 0 failed
+[tiles neighbor] 150/260 fetched, 0 failed
+[tiles neighbor] 200/260 fetched, 0 failed
+[tiles neighbor] 250/260 fetched, 0 failed
+[tiles distant] 50/260 fetched, 5 failed
+[tiles distant] 100/260 fetched, 6 failed
+[tiles distant] 150/260 fetched, 6 failed
+[tiles distant] 200/260 fetched, 7 failed
+[tiles distant] 250/260 fetched, 9 failed
+[tile2vec] 250/260 valid triplets after tile fetch
+[tile2vec] epoch 1/12  loss=0.0844
+[tile2vec] epoch 2/12  loss=0.0529
+[tile2vec] epoch 3/12  loss=0.0439
+[tile2vec] epoch 4/12  loss=0.0391
+[tile2vec] epoch 5/12  loss=0.0299
+[tile2vec] epoch 6/12  loss=0.0260
+[tile2vec] epoch 7/12  loss=0.0265
+[tile2vec] epoch 8/12  loss=0.0301
+[tile2vec] epoch 9/12  loss=0.0265
+[tile2vec] epoch 10/12  loss=0.0170
+[tile2vec] epoch 11/12  loss=0.0209
+[tile2vec] epoch 12/12  loss=0.0287
+[tile2vec] training done in 16.2s
+=== Urban2Vec ===
+[urban2vec] fetching 260 training tiles + POI bags...
+[tiles urban2vec] 50/260 fetched, 0 failed
+[tiles urban2vec] 100/260 fetched, 0 failed
+[tiles urban2vec] 150/260 fetched, 0 failed
+[tiles urban2vec] 200/260 fetched, 0 failed
+[tiles urban2vec] 250/260 fetched, 0 failed
+[urban2vec] 257/260 valid (image, POI-bag) pairs
+[urban2vec] epoch 1/15  loss=2.7915
+[urban2vec] epoch 2/15  loss=2.3232
+[urban2vec] epoch 3/15  loss=2.1342
+[urban2vec] epoch 4/15  loss=2.1724
+[urban2vec] epoch 5/15  loss=1.9518
+[urban2vec] epoch 6/15  loss=1.9471
+[urban2vec] epoch 7/15  loss=1.8721
+[urban2vec] epoch 8/15  loss=1.7734
+[urban2vec] epoch 9/15  loss=1.8348
+[urban2vec] epoch 10/15  loss=1.7545
+[urban2vec] epoch 11/15  loss=1.6108
+[urban2vec] epoch 12/15  loss=1.6087
+[urban2vec] epoch 13/15  loss=1.4987
+[urban2vec] epoch 14/15  loss=1.4966
+[urban2vec] epoch 15/15  loss=1.3834
+[urban2vec] training done in 6.3s
+[run_comparison] wrote C:\Users\angie\Documents\Projects\GeoNarrator\baseline_comparison\comparison_results.json
+[run_comparison] wrote C:\Users\angie\Documents\Projects\GeoNarrator\baseline_comparison\comparison_table.csv
+[run_comparison] wrote C:\Users\angie\Documents\Projects\GeoNarrator\baseline_comparison\comparison_chart.png
+[run_comparison] done in 66.6s
+  GeoSemantics V2 (homogeneous)              P@3=0.6506  sep=0.5935
+  GeoSemantics V3 (heterogeneous)            P@3=0.7175  sep=0.7012
+  TF-IDF (no graph, no learning)             P@3=None  sep=None
+  Place2Vec (POI co-occurrence)              P@3=0.7347  sep=0.4995
+  Tile2Vec (orthophoto only)                 P@3=0.602  sep=0.5208
+  Urban2Vec (orthophoto + POI fusion)        P@3=0.7109  sep=0.5869
+EXIT_CODE:0
