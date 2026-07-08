@@ -54,7 +54,7 @@ python train_classifier.py
 
 ## Model Training (optional — pretrained weights included)
 
-Pretrained `.pt` files are provided. To retrain from scratch:
+Pretrained `.pt` files (including `geosemantics_v3.pt` and `geosemantics_v2.pt`) are provided in the `models/` directory. To retrain from scratch:
 
 ```bash
 # V2 — homogeneous GATv2
@@ -75,18 +75,24 @@ python morph_app.py
 
 ---
 
-## Validation & Baseline Comparison
+## Reproduction Instructions
 
+To reproduce the study findings (Tables and Figures from the paper):
+
+1. **Evaluate the models & ablations**
 ```bash
-# Full evaluation: V2 vs V3, ablation, plots
+# Runs full evaluation on the Austrian benchmark (V2 vs V3, ablation, plots)
 python validation.py --plots --ablation
+```
+*Outputs will be saved in `validation_results/`, containing the separability metrics, character accuracy, and generated plots.*
 
-# Baseline comparison: Place2Vec / Tile2Vec / Urban2Vec vs V2/V3
+2. **Run the baseline comparison**
+```bash
+# Compares Typed-GAT/Flat-GAT against Place2Vec, Tile2Vec, and Urban2Vec
 cd baseline_comparison
 python run_comparison.py
 ```
-
-Results are written to `validation_results/` and `baseline_comparison/comparison_results.json`.
+*Outputs are saved to `baseline_comparison/comparison_results.json` and `baseline_comparison/comparison_table.csv`.*
 
 ---
 
@@ -102,6 +108,7 @@ train_classifier.py           ← MLP character classifier
 precompute_*.py               ← one-time precompute scripts
 static/morph.html             ← frontend
 saliency/                     ← saliency GCN
+models/                       ← pretrained model weights (.pt files)
 baseline_comparison/          ← Place2Vec, Tile2Vec, Urban2Vec baselines
 validation_results/           ← output of validation.py (gitignored)
 _poi_cache/                   ← precomputed data (gitignored)
